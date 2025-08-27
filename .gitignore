@@ -1,38 +1,40 @@
+# Build artifacts
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+build/
+*.jar
+*.war
+*.ear
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
+# IDE-specific files
+.idea/
+.vscode/
+.classpath
+.project
+.settings/
 *.iml
+*.iws
 *.ipr
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# Maven/Gradle specific files
+.gradle/
+.m2/
+out/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Log files
+*.log
+logs/
 
-### VS Code ###
-.vscode/
-
-### Mac OS ###
+# Operating System files
 .DS_Store
+Thumbs.db
+Desktop.ini
+
+# Environment-specific files (e.g., sensitive credentials)
+.env
+application-dev.properties
+application-dev.yml
+
+# Temporary files
+*.tmp
+*.swp
+*~
