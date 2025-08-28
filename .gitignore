@@ -1,40 +1,33 @@
-# Build artifacts
+HELP.md
 target/
-build/
-*.jar
-*.war
-*.ear
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# IDE-specific files
-.idea/
-.vscode/
+### STS ###
+.apt_generated
 .classpath
+.factorypath
 .project
-.settings/
-*.iml
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
 *.iws
+*.iml
 *.ipr
 
-# Maven/Gradle specific files
-.gradle/
-.m2/
-out/
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# Log files
-*.log
-logs/
-
-# Operating System files
-.DS_Store
-Thumbs.db
-Desktop.ini
-
-# Environment-specific files (e.g., sensitive credentials)
-.env
-application-dev.properties
-application-dev.yml
-
-# Temporary files
-*.tmp
-*.swp
-*~
+### VS Code ###
+.vscode/
