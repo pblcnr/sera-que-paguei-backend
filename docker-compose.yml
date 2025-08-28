@@ -1,1 +1,17 @@
-# PostgreSQL configuration will be added here
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: sera-que-paguei-db
+    environment:
+      POSTGRES_DB: seraquepaguei
+      POSTGRES_USER: adminroot
+      POSTGRES_PASSWORD: rootadmin1442
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
