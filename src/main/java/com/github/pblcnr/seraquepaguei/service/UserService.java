@@ -8,6 +8,7 @@ import com.github.pblcnr.seraquepaguei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,5 +72,21 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return UserResponseDTO.fromEntity(savedUser);
+    }
+
+    public List<UserResponseDTO> getAllUsersDTO() {
+        List<User> users = userRepository.findAll();
+        List<UserResponseDTO> dtos = users.stream()
+                .map(user -> UserResponseDTO.fromEntity(user))
+                .toList();
+
+        return dtos;
+    }
+
+    public UserResponseDTO getUserByIdDTO(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        return UserResponseDTO.fromEntity(user);
     }
 }
