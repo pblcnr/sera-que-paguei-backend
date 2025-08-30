@@ -1,6 +1,8 @@
 package com.github.pblcnr.seraquepaguei.service;
 
 
+import com.github.pblcnr.seraquepaguei.dto.user.UserRequestDTO;
+import com.github.pblcnr.seraquepaguei.dto.user.UserResponseDTO;
 import com.github.pblcnr.seraquepaguei.entity.User;
 import com.github.pblcnr.seraquepaguei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +56,20 @@ public class UserService {
             throw new RuntimeException("Usuário não encontrado");
         }
         userRepository.deleteById(id);
+    }
+
+    public UserResponseDTO createUserWithDTO(UserRequestDTO dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Email já cadastrado!");
+        }
+
+        User user = new User();
+        user.setNome(dto.getNome());
+        user.setEmail(dto.getEmail());
+        user.setSenha(dto.getSenha());
+
+        User savedUser = userRepository.save(user);
+
+        return UserResponseDTO.fromEntity(savedUser);
     }
 }
