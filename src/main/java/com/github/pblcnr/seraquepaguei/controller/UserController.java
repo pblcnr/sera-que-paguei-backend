@@ -1,5 +1,7 @@
 package com.github.pblcnr.seraquepaguei.controller;
 
+import com.github.pblcnr.seraquepaguei.dto.user.UserRequestDTO;
+import com.github.pblcnr.seraquepaguei.dto.user.UserResponseDTO;
 import com.github.pblcnr.seraquepaguei.entity.User;
 import com.github.pblcnr.seraquepaguei.service.UserService;
 import jakarta.validation.Valid;
@@ -18,22 +20,24 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User createdUser = userService.createUser(user);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO dto) {
+        UserResponseDTO createdUser = userService.createUserWithDTO(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsersDTO());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+        try {
+            UserResponseDTO dto = userService.getUserByIdDTO(id);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{id}")
