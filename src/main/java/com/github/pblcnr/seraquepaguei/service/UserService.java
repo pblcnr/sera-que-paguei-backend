@@ -3,6 +3,7 @@ package com.github.pblcnr.seraquepaguei.service;
 
 import com.github.pblcnr.seraquepaguei.dto.user.UserRequestDTO;
 import com.github.pblcnr.seraquepaguei.dto.user.UserResponseDTO;
+import com.github.pblcnr.seraquepaguei.dto.user.UserUpdateDTO;
 import com.github.pblcnr.seraquepaguei.entity.User;
 import com.github.pblcnr.seraquepaguei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +23,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User updateUser(Long id, User userDetails) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-        user.setNome(userDetails.getNome());
-        user.setEmail(userDetails.getEmail());
-
-        return userRepository.save(user);
-    }
-
-    public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new RuntimeException("Usuário não encontrado");
-        }
-        userRepository.deleteById(id);
-    }
-
     public UserResponseDTO createUserWithDTO(UserRequestDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email já cadastrado!");
@@ -54,7 +39,7 @@ public class UserService {
     }
 
     public List<UserResponseDTO> getAllUsersDTO() {
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findByAtivoTrue();
         List<UserResponseDTO> dtos = users.stream()
                 .map(user -> UserResponseDTO.fromEntity(user))
                 .toList();
@@ -64,9 +49,42 @@ public class UserService {
 
     public UserResponseDTO getUserByIdDTO(Long id) {
         User user = userRepository.findById(id)
+                .filter(u -> u.getAtivo())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         return UserResponseDTO.fromEntity(user);
+    }
+
+    public UserResponseDTO updateUserDTO(Long userID, UserUpdateDTO dto) {
+        User user = userRepository.findById(userID)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
+            user.setNome(dto.getNome());
+        }
+
+        if (dto.getEmail() != null) {
+            if (!dto.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
+                throw new RuntimeException("Email já cadastrado");
+            }
+
+            user.setEmail(dto.getEmail());
+        }
+
+        if (dto.getSenha() != null) {
+            user.setSenha(passwordEncoder.encode(dto.getSenha()));
+        }
+
+        User updatedUser = userRepository.save(user);
+        return UserResponseDTO.fromEntity(updatedUser);
+    }
+
+    public void softDeleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuárnio não encontrado"));
+
+        user.setAtivo(false);
+        userRepository.save(user);
     }
 
     public boolean validatePassword(String email, String rawPassword) {
@@ -78,33 +96,4 @@ public class UserService {
         User user = userOpt.get();
         return passwordEncoder.matches(rawPassword, user.getSenha());
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
