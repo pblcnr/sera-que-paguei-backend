@@ -34,6 +34,9 @@ public class User {
     @Column(name = "token_recuperacao")
     private String tokenRecuperacaoSenha;
 
+    @Column(name = "ativo", nullable = false)
+    private Boolean ativo = true;
+
     public User() {
 
     }
@@ -109,5 +112,13 @@ public class User {
 
     public void setTokenRecuperacaoSenha(String tokenRecuperacaoSenha) {
         this.tokenRecuperacaoSenha = tokenRecuperacaoSenha;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }
