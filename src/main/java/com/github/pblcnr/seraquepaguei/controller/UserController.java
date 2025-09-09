@@ -2,6 +2,7 @@ package com.github.pblcnr.seraquepaguei.controller;
 
 import com.github.pblcnr.seraquepaguei.dto.user.UserRequestDTO;
 import com.github.pblcnr.seraquepaguei.dto.user.UserResponseDTO;
+import com.github.pblcnr.seraquepaguei.dto.user.UserUpdateDTO;
 import com.github.pblcnr.seraquepaguei.entity.User;
 import com.github.pblcnr.seraquepaguei.service.UserService;
 import jakarta.validation.Valid;
@@ -41,9 +42,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
         try {
-            User updatedUser = userService.updateUser(id, user);
+            UserResponseDTO updatedUser = userService.updateUserDTO(id, dto);
             return ResponseEntity.ok(updatedUser);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -51,9 +52,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         try {
-            userService.deleteUser(id);
+            userService.softDeleteUser(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
