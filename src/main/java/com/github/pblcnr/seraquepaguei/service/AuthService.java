@@ -7,11 +7,8 @@ import com.github.pblcnr.seraquepaguei.dto.user.UserResponseDTO;
 import com.github.pblcnr.seraquepaguei.entity.User;
 import com.github.pblcnr.seraquepaguei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -24,6 +21,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     public UserResponseDTO register(UserRequestDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
@@ -47,7 +47,7 @@ public class AuthService {
 
         LoginResponseDTO response = new LoginResponseDTO();
 
-        response.setToken("token-temporario-" + user.getId());
+        response.setToken(jwtService.generateToken(user.getId()));
         response.setUserId(user.getId());
         response.setNome(user.getNome());
         response.setEmail(user.getEmail());
