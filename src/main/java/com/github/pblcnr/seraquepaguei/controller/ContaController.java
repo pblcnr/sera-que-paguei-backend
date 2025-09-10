@@ -23,6 +23,11 @@ public class ContaController {
     public ResponseEntity<ContaResponseDTO> createConta(@Valid @RequestBody ContaRequestDTO dto, HttpServletRequest request) {
         try {
             Long userId = (Long) request.getAttribute("userId");
+
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
             ContaResponseDTO createdConta = contaService.createConta(dto, userId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdConta);
         } catch (RuntimeException e) {
@@ -33,6 +38,11 @@ public class ContaController {
     @GetMapping
     public ResponseEntity<List<ContaResponseDTO>> getContasUsuario(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
+
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         return ResponseEntity.ok(contaService.getContasUsuario(userId));
     }
 
@@ -40,6 +50,11 @@ public class ContaController {
     public ResponseEntity<ContaResponseDTO> pagarConta(@PathVariable Long id, HttpServletRequest request) {
         try {
             Long userId = (Long) request.getAttribute("userId");
+
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
             ContaResponseDTO contaPaga = contaService.pagarConta(id, userId);
             return ResponseEntity.ok(contaPaga);
         } catch (RuntimeException e) {

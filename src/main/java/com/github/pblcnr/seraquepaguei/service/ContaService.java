@@ -66,7 +66,7 @@ public class ContaService {
         conta.setDataPagamento(LocalDate.now());
         conta.setStatus(StatusConta.PAGA);
 
-        if (conta.getRecorrente()) {
+        if (conta.getRecorrente() != null && conta.getRecorrente()) {
             Conta novaConta = new Conta();
             novaConta.setDescricao(conta.getDescricao());
             novaConta.setValor(conta.getValor());
