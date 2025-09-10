@@ -3,6 +3,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+.env
+application-dev.properties
+application-prod.properties
+
 ### STS ###
 .apt_generated
 .classpath

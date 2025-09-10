@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: seraquepaguei
       POSTGRES_USER: adminroot
-      POSTGRES_PASSWORD: rootadmin1442
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-defaultpass}
     ports:
       - "5432:5432"
     volumes:
