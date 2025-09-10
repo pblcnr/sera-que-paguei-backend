@@ -55,9 +55,13 @@ public class ContaService {
         return dtos;
     }
 
-    public ContaResponseDTO pagarConta(Long contaId) {
+    public ContaResponseDTO pagarConta(Long contaId, Long userId) {
         Conta conta = contaRepository.findById(contaId)
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+
+        if (!conta.getUsuario().getId().equals(userId)) {
+            throw new RuntimeException("Conta não pertence ao usuário");
+        }
 
         conta.setDataPagamento(LocalDate.now());
         conta.setStatus(StatusConta.PAGA);

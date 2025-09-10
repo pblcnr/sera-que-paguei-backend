@@ -20,12 +20,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO dto) {
-        UserResponseDTO createdUser = userService.createUserWithDTO(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-    }
-
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsersDTO());

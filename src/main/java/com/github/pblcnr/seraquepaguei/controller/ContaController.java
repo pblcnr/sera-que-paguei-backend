@@ -3,6 +3,7 @@ package com.github.pblcnr.seraquepaguei.controller;
 import com.github.pblcnr.seraquepaguei.dto.conta.ContaRequestDTO;
 import com.github.pblcnr.seraquepaguei.dto.conta.ContaResponseDTO;
 import com.github.pblcnr.seraquepaguei.service.ContaService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,10 @@ public class ContaController {
     @Autowired
     private ContaService contaService;
 
-    @PostMapping("/user/{userId}")
-    public ResponseEntity<ContaResponseDTO> createConta(@Valid @RequestBody ContaRequestDTO dto, @PathVariable Long userId) {
+    @PostMapping
+    public ResponseEntity<ContaResponseDTO> createConta(@Valid @RequestBody ContaRequestDTO dto, HttpServletRequest request) {
         try {
+            Long userId = (Long) request.getAttribute("userId");
             ContaResponseDTO createdConta = contaService.createConta(dto, userId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdConta);
         } catch (RuntimeException e) {
@@ -28,15 +30,17 @@ public class ContaController {
         }
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ContaResponseDTO>> getContasUsuario(@PathVariable Long userId) {
+    @GetMapping
+    public ResponseEntity<List<ContaResponseDTO>> getContasUsuario(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
         return ResponseEntity.ok(contaService.getContasUsuario(userId));
     }
 
-    @PutMapping("/{contaId}/pagar")
-    public ResponseEntity<ContaResponseDTO> pagarConta(@PathVariable Long contaId) {
+    @PutMapping("/{id}/pagar")
+    public ResponseEntity<ContaResponseDTO> pagarConta(@PathVariable Long id, HttpServletRequest request) {
         try {
-            ContaResponseDTO contaPaga = contaService.pagarConta(contaId);
+            Long userId = (Long) request.getAttribute("userId");
+            ContaResponseDTO contaPaga = contaService.pagarConta(id, userId);
             return ResponseEntity.ok(contaPaga);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
