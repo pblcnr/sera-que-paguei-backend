@@ -21,18 +21,15 @@ public class ContaController {
 
     @PostMapping
     public ResponseEntity<ContaResponseDTO> createConta(@Valid @RequestBody ContaRequestDTO dto, HttpServletRequest request) {
-        try {
-            Long userId = (Long) request.getAttribute("userId");
 
-            if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
+        Long userId = (Long) request.getAttribute("userId");
 
-            ContaResponseDTO createdConta = contaService.createConta(dto, userId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdConta);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        ContaResponseDTO createdConta = contaService.createConta(dto, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdConta);
     }
 
     @GetMapping
@@ -48,18 +45,14 @@ public class ContaController {
 
     @PutMapping("/{id}/pagar")
     public ResponseEntity<ContaResponseDTO> pagarConta(@PathVariable Long id, HttpServletRequest request) {
-        try {
-            Long userId = (Long) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute("userId");
 
-            if (userId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-
-            ContaResponseDTO contaPaga = contaService.pagarConta(id, userId);
-            return ResponseEntity.ok(contaPaga);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        ContaResponseDTO contaPaga = contaService.pagarConta(id, userId);
+        return ResponseEntity.ok(contaPaga);
     }
 
     @GetMapping("/vencendo-hoje")

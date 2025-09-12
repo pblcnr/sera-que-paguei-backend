@@ -5,6 +5,8 @@ import com.github.pblcnr.seraquepaguei.dto.auth.LoginResponseDTO;
 import com.github.pblcnr.seraquepaguei.dto.user.UserRequestDTO;
 import com.github.pblcnr.seraquepaguei.dto.user.UserResponseDTO;
 import com.github.pblcnr.seraquepaguei.entity.User;
+import com.github.pblcnr.seraquepaguei.exception.custom.BusinessException;
+import com.github.pblcnr.seraquepaguei.exception.custom.DuplicateResourceException;
 import com.github.pblcnr.seraquepaguei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +29,7 @@ public class AuthService {
 
     public UserResponseDTO register(UserRequestDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email já cadastrado");
+            throw new DuplicateResourceException("Email já cadastrado: " + dto.getEmail());
         }
 
         return userService.createUserWithDTO(dto);
@@ -35,14 +37,14 @@ public class AuthService {
 
     public LoginResponseDTO login(LoginRequestDTO dto) {
         User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email ou senha inválidos"));
+                .orElseThrow(() -> new BusinessException("Email ou senha inválidos"));
 
         if (!user.getAtivo()) {
-            throw new RuntimeException("Usuário inativo");
+            throw new BusinessException("Usuário inativo. Entre em contato com o suporte");
         }
 
         if (!passwordEncoder.matches(dto.getSenha(), user.getSenha())) {
-            throw new RuntimeException("Email ou senha inválidos");
+            throw new BusinessException("Email ou senha inválidos");
         }
 
         LoginResponseDTO response = new LoginResponseDTO();

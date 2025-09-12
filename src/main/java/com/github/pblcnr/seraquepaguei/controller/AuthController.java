@@ -27,21 +27,13 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Senhas não conferem");
         }
 
-        try{
-            UserResponseDTO user = authService.register(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(user);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        UserResponseDTO user = authService.register(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO dto) {
-        try {
-            LoginResponseDTO response = authService.login(dto);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
+        LoginResponseDTO response = authService.login(dto);
+        return ResponseEntity.ok(response);
     }
 }

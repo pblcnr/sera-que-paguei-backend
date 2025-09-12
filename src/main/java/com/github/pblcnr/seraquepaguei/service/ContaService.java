@@ -5,6 +5,8 @@ import com.github.pblcnr.seraquepaguei.dto.conta.ContaResponseDTO;
 import com.github.pblcnr.seraquepaguei.entity.Conta;
 import com.github.pblcnr.seraquepaguei.entity.User;
 import com.github.pblcnr.seraquepaguei.enums.StatusConta;
+import com.github.pblcnr.seraquepaguei.exception.custom.BusinessException;
+import com.github.pblcnr.seraquepaguei.exception.custom.ResourceNotFoundException;
 import com.github.pblcnr.seraquepaguei.repository.ContaRepository;
 import com.github.pblcnr.seraquepaguei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,10 @@ public class ContaService {
 
     public ContaResponseDTO createConta(ContaRequestDTO dto, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + userId + " não encontrado"));
 
         if (dto.getDataVencimento().isBefore(LocalDate.now())) {
-            throw new RuntimeException("Data de vencimento não pode ser no passado");
+            throw new BusinessException("Data de vencimento não pode ser no passado");
         }
 
         Conta conta = new Conta();
@@ -44,7 +46,7 @@ public class ContaService {
 
     public List<ContaResponseDTO> getContasUsuario(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + userId + " não encontrado"));
 
         List<Conta> conta = contaRepository.findByUsuario(user);
 
@@ -60,7 +62,7 @@ public class ContaService {
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
 
         if (!conta.getUsuario().getId().equals(userId)) {
-            throw new RuntimeException("Conta não pertence ao usuário");
+            throw new BusinessException("Você não tem permissão para acessar esta conta");
         }
 
         conta.setDataPagamento(LocalDate.now());

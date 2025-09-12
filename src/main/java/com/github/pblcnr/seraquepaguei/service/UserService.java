@@ -5,6 +5,8 @@ import com.github.pblcnr.seraquepaguei.dto.user.UserRequestDTO;
 import com.github.pblcnr.seraquepaguei.dto.user.UserResponseDTO;
 import com.github.pblcnr.seraquepaguei.dto.user.UserUpdateDTO;
 import com.github.pblcnr.seraquepaguei.entity.User;
+import com.github.pblcnr.seraquepaguei.exception.custom.DuplicateResourceException;
+import com.github.pblcnr.seraquepaguei.exception.custom.ResourceNotFoundException;
 import com.github.pblcnr.seraquepaguei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +27,7 @@ public class UserService {
 
     public UserResponseDTO createUserWithDTO(UserRequestDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email já cadastrado!");
+            throw new DuplicateResourceException("Email já cadastrado: " + dto.getEmail());
         }
 
         User user = new User();
@@ -47,17 +49,17 @@ public class UserService {
         return dtos;
     }
 
-    public UserResponseDTO getUserByIdDTO(Long id) {
-        User user = userRepository.findById(id)
+    public UserResponseDTO getUserByIdDTO(Long userId) {
+        User user = userRepository.findById(userId)
                 .filter(u -> u.getAtivo())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + userId + " não encontrado"));
 
         return UserResponseDTO.fromEntity(user);
     }
 
-    public UserResponseDTO updateUserDTO(Long userID, UserUpdateDTO dto) {
-        User user = userRepository.findById(userID)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    public UserResponseDTO updateUserDTO(Long userId, UserUpdateDTO dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + userId + " não encontrado"));
 
         if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
             user.setNome(dto.getNome());
@@ -65,7 +67,7 @@ public class UserService {
 
         if (dto.getEmail() != null) {
             if (!dto.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
-                throw new RuntimeException("Email já cadastrado");
+                throw new DuplicateResourceException("Email já cadastrado: " + dto.getEmail());
             }
 
             user.setEmail(dto.getEmail());
@@ -81,7 +83,7 @@ public class UserService {
 
     public void softDeleteUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuárnio não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + userId + " não encontrado"));
 
         user.setAtivo(false);
         userRepository.save(user);

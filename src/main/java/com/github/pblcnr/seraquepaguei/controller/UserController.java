@@ -27,31 +27,25 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
-        try {
-            UserResponseDTO dto = userService.getUserByIdDTO(id);
-            return ResponseEntity.ok(dto);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+        UserResponseDTO dto = userService.getUserByIdDTO(id);
+        return ResponseEntity.ok(dto);
+
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
-        try {
-            UserResponseDTO updatedUser = userService.updateUserDTO(id, dto);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+        UserResponseDTO updatedUser = userService.updateUserDTO(id, dto);
+        return ResponseEntity.ok(updatedUser);
+
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        try {
-            userService.softDeleteUser(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+        userService.softDeleteUser(id);
+        return ResponseEntity.noContent().build();
+
     }
 }
