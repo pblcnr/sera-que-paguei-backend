@@ -56,6 +56,9 @@ public class Conta {
     @Column(name = "atualizado_em")
     private LocalDateTime atualizadoEm;
 
+    @Column(name = "notificado_em")
+    private LocalDateTime notificadoEm;
+
     public Conta() {
 
     }
@@ -178,5 +181,13 @@ public class Conta {
 
     public void setValor(BigDecimal valor) {
             this.valor = valor;
+    }
+
+    public LocalDateTime getNotificadoEm() {
+        return notificadoEm;
+    }
+
+    public void setNotificadoEm(LocalDateTime notificadoEm) {
+        this.notificadoEm = notificadoEm;
     }
 }

@@ -29,7 +29,7 @@ public class ContaService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + userId + " não encontrado"));
 
-        if (dto.getDataVencimento().isBefore(LocalDate.now()) || dto.getDataVencimento().equals(LocalDate.now())) {
+        if (dto.getDataVencimento().isBefore(LocalDate.now())) {
             throw new BusinessException("Data de vencimento não pode ser no passado");
         }
 

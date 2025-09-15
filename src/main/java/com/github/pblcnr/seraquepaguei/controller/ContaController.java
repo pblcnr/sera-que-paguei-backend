@@ -2,6 +2,7 @@ package com.github.pblcnr.seraquepaguei.controller;
 
 import com.github.pblcnr.seraquepaguei.dto.conta.ContaRequestDTO;
 import com.github.pblcnr.seraquepaguei.dto.conta.ContaResponseDTO;
+import com.github.pblcnr.seraquepaguei.scheduler.NotificationScheduler;
 import com.github.pblcnr.seraquepaguei.service.ContaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -18,6 +19,8 @@ public class ContaController {
 
     @Autowired
     private ContaService contaService;
+    @Autowired
+    private NotificationScheduler notificationScheduler;
 
     @PostMapping
     public ResponseEntity<ContaResponseDTO> createConta(@Valid @RequestBody ContaRequestDTO dto, HttpServletRequest request) {
@@ -58,5 +61,11 @@ public class ContaController {
     @GetMapping("/vencendo-hoje")
     public ResponseEntity<List<ContaResponseDTO>> contasVencendoHoje() {
         return ResponseEntity.ok(contaService.contasVencendoHoje());
+    }
+
+    @GetMapping("/test-email")
+    public ResponseEntity<String> testarEmail() {
+        notificationScheduler.enviarLembretesVencimento();
+        return ResponseEntity.ok("Emails enviados!");
     }
 }
