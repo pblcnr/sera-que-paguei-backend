@@ -29,7 +29,7 @@ public class ContaService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + userId + " não encontrado"));
 
-        if (dto.getDataVencimento().isBefore(LocalDate.now())) {
+        if (dto.getDataVencimento().isBefore(LocalDate.now()) || dto.getDataVencimento().equals(LocalDate.now())) {
             throw new BusinessException("Data de vencimento não pode ser no passado");
         }
 
@@ -59,7 +59,7 @@ public class ContaService {
 
     public ContaResponseDTO pagarConta(Long contaId, Long userId) {
         Conta conta = contaRepository.findById(contaId)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Conta com ID " + contaId + " não encontrada"));
 
         if (!conta.getUsuario().getId().equals(userId)) {
             throw new BusinessException("Você não tem permissão para acessar esta conta");
@@ -92,5 +92,9 @@ public class ContaService {
                 .toList();
 
         return dtos;
+    }
+
+    public List<Conta> getContasVencendoHojeComUsuario() {
+        return contaRepository.findByDataVencimentoAndStatus(LocalDate.now(), StatusConta.PENDENTE);
     }
 }
