@@ -2,11 +2,13 @@ package com.github.pblcnr.seraquepaguei.controller;
 
 import com.github.pblcnr.seraquepaguei.dto.conta.ContaRequestDTO;
 import com.github.pblcnr.seraquepaguei.dto.conta.ContaResponseDTO;
+import com.github.pblcnr.seraquepaguei.enums.StatusConta;
 import com.github.pblcnr.seraquepaguei.scheduler.NotificationScheduler;
 import com.github.pblcnr.seraquepaguei.service.ContaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,14 +38,23 @@ public class ContaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ContaResponseDTO>> getContasUsuario(HttpServletRequest request) {
+    public ResponseEntity<Page<ContaResponseDTO>> getContasUsuario(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Integer mes,
+            @RequestParam(required = false) Integer ano,
+            @RequestParam(required = false)StatusConta status) {
+
         Long userId = (Long) request.getAttribute("userId");
 
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        return ResponseEntity.ok(contaService.getContasUsuario(userId));
+        Page<ContaResponseDTO> contas = contaService.getContasFiltradasPaginadas(userId, page, size, mes, ano, status);
+
+        return ResponseEntity.ok(contas);
     }
 
     @PutMapping("/{id}/pagar")

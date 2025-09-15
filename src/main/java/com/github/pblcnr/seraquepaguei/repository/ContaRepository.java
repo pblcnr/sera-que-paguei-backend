@@ -6,22 +6,25 @@ import com.github.pblcnr.seraquepaguei.enums.StatusConta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 public interface ContaRepository extends JpaRepository<Conta, Long> {
 
-    List<Conta> findByUsuario(User usuario);
+    Page<Conta> findByUsuario(User usuario, Pageable pageable);
 
-    List<Conta> findByUsuarioAndStatus(User usuario, StatusConta status);
+    Page<Conta> findByUsuarioAndStatus(User usuario, StatusConta status, Pageable pageable);
 
     List<Conta> findByDataVencimentoAndStatus(LocalDate data, StatusConta status);
 
-    List<Conta> findByUsuarioAndDataVencimentoBetween(
+    Page<Conta> findByUsuarioAndDataVencimentoBetween(
             User usuario,
             LocalDate inicio,
-            LocalDate fim
+            LocalDate fim,
+            Pageable pageable
     );
 
     boolean existsByUsuarioAndDescricaoAndDataVencimento(

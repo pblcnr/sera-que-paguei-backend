@@ -10,11 +10,13 @@ import com.github.pblcnr.seraquepaguei.exception.custom.ResourceNotFoundExceptio
 import com.github.pblcnr.seraquepaguei.repository.ContaRepository;
 import com.github.pblcnr.seraquepaguei.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ContaService {
@@ -48,7 +50,7 @@ public class ContaService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + userId + " não encontrado"));
 
-        List<Conta> conta = contaRepository.findByUsuario(user);
+        Page<Conta> conta = contaRepository.findByUsuario(user, PageRequest.of(0, 10));
 
         List<ContaResponseDTO> dtos = conta.stream()
                 .map(c -> ContaResponseDTO.fromEntity(c))
@@ -96,5 +98,26 @@ public class ContaService {
 
     public List<Conta> getContasVencendoHojeComUsuario() {
         return contaRepository.findByDataVencimentoAndStatus(LocalDate.now(), StatusConta.PENDENTE);
+    }
+
+    public Page<ContaResponseDTO> getContasFiltradasPaginadas(Long userId, int page, int size, Integer mes, Integer ano, StatusConta status) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Conta> contasPage;
+
+        if (mes != null && ano != null) {
+            LocalDate inicio = LocalDate.of(ano, mes, 1);
+            LocalDate fim = inicio.plusMonths(1).minusDays(1);
+            contasPage = contaRepository.findByUsuarioAndDataVencimentoBetween(user, inicio, fim, pageable);
+        } else if (status != null) {
+            contasPage = contaRepository.findByUsuarioAndStatus(user, status, pageable);
+        } else {
+            contasPage = contaRepository.findByUsuario(user, pageable);
+        }
+
+        return contasPage.map(c -> ContaResponseDTO.fromEntity(c));
     }
 }

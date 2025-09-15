@@ -13,9 +13,6 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${spring.mail.password}")
-    private String configuredPassword;
-
     public void enviarLembrete(String destinatario, String nomeConta, String valor, String vencimento) {
         System.out.println("========= EMAIL SIMULADO =========");
         System.out.println("Para: " + destinatario);
@@ -26,11 +23,5 @@ public class EmailService {
         System.out.println("==================================");
 
 //            mailSender.send(message);
-    }
-
-    @PostConstruct
-    public void checkConfig() {
-        System.out.println("Password length: " + (configuredPassword != null ? configuredPassword.length() : "NULL"));
-        System.out.println("Password starts with: " + (configuredPassword != null ? configuredPassword.substring(0, 4) : "NULL"));
     }
 }
